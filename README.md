@@ -27,16 +27,16 @@ Copy the .env and docker-compose.yml files from geonode_local_configuration to g
 In the root folder of geonode-project, locate the src folder, you should have the following structure:
 geonode-project/ \
 ├── src/ \
-    ├── manage.py \
-    ├── manage.sh \
-    ├── setup.py \
-    ├── uwsgi.ini \
-    ├── project_name/ \
-        ├── __init__.py \
-        ├── apps.py \
-        ├── celeryapp.py \
-        ├── settings.py \
-        ├── wsgi.py \
+&emsp;├── manage.py \
+&emsp;├── manage.sh \
+&emsp;├── setup.py \
+&emsp;├── uwsgi.ini \
+&emsp;├── project_name/ \
+&emsp;&emsp;├── __init__.py \
+&emsp;&emsp;├── apps.py \
+&emsp;&emsp;├── celeryapp.py \
+&emsp;&emsp;├── settings.py \
+&emsp;&emsp;├── wsgi.py \
 
 I'm not sure if there's a more elegant way to do this step :3, but you need to rename the project_name folder. In my case, I renamed it back to geonode-project. Then, within the listed files, you need to manually search and replace the string
 {{ project_name }} with the name geonode-project.
