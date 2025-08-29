@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: geonodeproject/geonode:dev
+    container_name: django
+    env_file:
+      - .env
+    environment:
+      - SPATIAL_BACKEND=postgis
+      - DATABASE_URL=${DATABASE_URL}
+      - GEODATABASE_URL=${GEODATABASE_URL}
+    ports:
+      - "${HTTP_PORT:-8000}:8000"
+    depends_on:
+      - db
+      - geoserver
+      - elasticsearch
+    volumes:
+      - geonode_data:/data
+    restart: unless-stopped
+
+  db:
+    image: postgis/postgis:12-3.3
+    container_name: db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${GEONODE_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+
+  geoserver:
+    image: kartoza/geoserver:2.22.2
+    container_name: geoserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - geoserver_data:/geoserver_data
+    restart: unless-stopped
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+volumes:
+  dbdata:
+  geonode_data:
+  geoserver_data:
+  elasticsearch_data:
